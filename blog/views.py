@@ -36,9 +36,9 @@ def index(request):
 
     context = {
         'most_popular_posts': [
-            serialize_post(post) for post in most_popular_posts
+            serialize_post(post) for post in most_popular_posts.prefetch_related('author')
         ],
-        'page_posts': [serialize_post(post) for post in fresh_posts],
+        'page_posts': [serialize_post(post) for post in fresh_posts.prefetch_related('author')],
         'popular_tags': [serialize_tag(tag) for tag in popular_tags],
     }
     return render(request, 'index.html', context)

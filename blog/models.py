@@ -1,9 +1,45 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.db.models import Count
+
+
+class PostQuerySet(models.QuerySet):
+
+    def year(self, year):
+        posts_at_year = self.filter(published_at__year=year).order_by('published_at')
+        return posts_at_year
+    
+    def popular(self):
+        return self.annotate(likes_count=Count('likes', distinct=True)).order_by('-likes_count')
+    
+    def fetch_with_comments_count(self):
+        posts = list(self)
+        if not posts:
+            return posts
+        
+        ids = [p.id for p in posts]
+        qs = Post.objects.filter(id__in=ids).annotate(comments_count=Count('comments'))
+        counts = dict(qs.values_list('id', 'comments_count'))
+        
+        for p in posts:
+            p.comments_count = counts.get(p.id, 0)
+        
+        return posts
+
+
+
+class TagQuerySet(models.QuerySet):
+
+    def popular(self):
+        most_popular_posts = Post.objects \
+        .annotate(likes_count=Count('likes', distinct=True)) \
+        .order_by('-likes_count')
+        return most_popular_posts
 
 
 class Post(models.Model):
+    objects = PostQuerySet.as_manager()
     title = models.CharField('Заголовок', max_length=200)
     text = models.TextField('Текст')
     slug = models.SlugField('Название в виде url', max_length=200)

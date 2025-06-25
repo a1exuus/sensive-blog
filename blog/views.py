@@ -42,10 +42,10 @@ def serialize_tag(tag):
 
 
 def index(request):
-    qs_popular = Post.objects.popular().prefetch_related('author')[:5]
+    qs_popular = Post.objects.popular().prefetch_related('author', 'tags')[:5]
 
     most_popular_posts = Post.objects.filter(id__in=[p.id for p in qs_popular]) \
-                                    .prefetch_related('author')
+                                    .prefetch_related('author', 'tags')
 
     fresh_qs = (
         Post.objects

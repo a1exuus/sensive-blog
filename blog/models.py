@@ -32,10 +32,7 @@ class PostQuerySet(models.QuerySet):
 class TagQuerySet(models.QuerySet):
 
     def popular(self):
-        most_popular_posts = Post.objects \
-        .annotate(likes_count=Count('likes', distinct=True)) \
-        .order_by('-likes_count')
-        return most_popular_posts
+        return self.annotate(likes_count=Count('likes', distinct=True)).order_by('-likes_count')
 
 
 class Post(models.Model):

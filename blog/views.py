@@ -39,7 +39,7 @@ def index(request):
     most_fresh_posts = list(
         base_posts
         .annotate(comments_count=Count('comments', distinct=True))
-        .order_by('-published_at')[5:]
+        .order_by('-published_at')[:5]
     )
 
     most_popular_tags = (

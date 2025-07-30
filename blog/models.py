@@ -37,6 +37,9 @@ class TagQuerySet(models.QuerySet):
             .annotate(posts_count=Count('posts', distinct=True)) \
             .order_by('-posts_count')
 
+    def prefetch_tags(self):
+        return self.annotate(posts_with_tag_count=Count('posts'))
+
 
 class Post(models.Model):
     objects = PostQuerySet.as_manager()

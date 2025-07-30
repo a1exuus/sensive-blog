@@ -4,8 +4,8 @@ from django.db.models import Count, Prefetch
 
 TAG_PREFETCH_QS = Prefetch(
     'tags',
-    queryset=Tag.objects.annotate(posts_with_tag_count=Count('posts')),
-)
+    queryset=Tag.objects.prefetch_tags()
+    )
 
 
 def serialize_post(post):

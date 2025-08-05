@@ -111,14 +111,13 @@ def post_detail(request, slug):
 
 
 def tag_filter(request, tag_title):
-    related_posts = Post.objects.filter(tags__title=tag_title) \
-                                .annotate(comments_count=Count(
-                                    'comments',
-                                    distinct=True
-                                    )
-                                ) \
-                                .select_related('author') \
-                                .prefetch_related(TAG_PREFETCH_QS)[:20]
+    related_posts = (
+        Post.objects
+        .filter(tags__title=tag_title)
+        .annotate(comments_count=Count('comments', distinct=True))
+        .select_related('author')
+        .prefetch_related(TAG_PREFETCH_QS)
+    )[:20]
 
     most_popular_tags = (
         Tag.objects

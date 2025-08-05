@@ -128,7 +128,8 @@ def tag_filter(request, tag_title):
     )
 
     most_popular_posts = Post.objects.popular() \
-        .prefetch_related('author') \
+        .select_related('author') \
+        .prefetch_related('tags') \
         .fetch_with_comments_count()
 
     context = {

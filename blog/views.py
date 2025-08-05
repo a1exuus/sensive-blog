@@ -59,10 +59,10 @@ def index(request):
 
 
 def post_detail(request, slug):
-    base_posts = Post.objects.all() \
-        .prefetch_related(TAG_PREFETCH_QS) \
-        .select_related('author')
-    post = get_object_or_404(base_posts, slug=slug)
+    post = get_object_or_404(Post.objects
+                             .prefetch_related(TAG_PREFETCH_QS)
+                             .select_related('author'),
+                             slug=slug)
     comments = Comment.objects.filter(post=post).select_related('author')
     serialized_comments = []
     for comment in comments:
